@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    env_file:
+      - .env # Load variables from .env file
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Reference the named volume
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "8888:80"
+    env_file:
+      - .env
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  pgadmin-data:
